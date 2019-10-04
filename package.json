@@ -1,7 +1,7 @@
 {
   "name": "versatile-trading-bot",
   "version": "1.0.0",
-  "description": "A versatile trading which can be connected to different brokers and which can use different strategies.",
+  "description": "A versatile trading bot which can be connected to different brokers and which can use different strategies.",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
