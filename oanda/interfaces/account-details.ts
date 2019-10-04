@@ -1,0 +1,42 @@
+import { Position } from "./position";
+import { Order } from "./orders/order";
+import { Trade } from "./trade";
+
+export interface AccountDetails {
+  guaranteedStopLossOrderMode: string;
+  guaranteedStopLossOrderMutability: string;
+  id: string;
+  createdTime: string;
+  currency: string;
+  createdByUserID: number;
+  alias: string;
+  marginRate: string;
+  hedgingEnabled: boolean;
+  lastTransactionID: string;
+  balance: string;
+  openTradeCount: number;
+  openPositionCount: number;
+  pendingOrderCount: number;
+  pl: string;
+  resettablePL: string;
+  resettablePLTime: string;
+  financing: string;
+  commission: string;
+  guaranteedExecutionFees: string;
+  orders: Order[];
+  positions: Position[];
+  trades: Trade[];
+  unrealizedPL: string;
+  NAV: string;
+  marginUsed: string;
+  marginAvailable: string;
+  positionValue: string;
+  marginCloseoutUnrealizedPL: string;
+  marginCloseoutNAV: string;
+  marginCloseoutMarginUsed: string;
+  marginCloseoutPositionValue: string;
+  marginCloseoutPercent: string;
+  withdrawalLimit: string;
+  marginCallMarginUsed: string;
+  marginCallPercent: string;
+}

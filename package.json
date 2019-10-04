@@ -1,0 +1,22 @@
+{
+  "name": "versatile-trading-bot",
+  "version": "1.0.0",
+  "description": "A versatile trading which can be connected to different brokers and which can use different strategies.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "Théo Madzou",
+  "license": "ISC",
+  "dependencies": {
+    "@oanda/v20": "^3.0.22-0",
+    "express": "^4.16.3",
+    "gdax": "^0.8.0",
+    "ichimoku": "^1.0.4",
+    "nodemailer": "^4.6.8",
+    "request": "^2.88.0",
+    "rxjs": "^6.3.2",
+    "technicalindicators": "^1.1.13",
+    "ws": "^6.0.0"
+  }
+}

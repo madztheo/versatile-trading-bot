@@ -1,0 +1,35 @@
+export interface AccountSummary {
+  id: string;
+  createdTime: string;
+  currency: string;
+  createdByUserID: number;
+  alias: string;
+  marginRate: string;
+  hedgingEnabled: boolean;
+  lastTransactionID: string;
+  balance: string;
+  openTradeCount: number;
+  openPositionCount: number;
+  pendingOrderCount: number;
+  pl: string;
+  resettablePL: string;
+  unrealizedPL: string;
+  NAV: string;
+  marginUsed: string;
+  marginAvailable: string;
+  positionValue: string;
+  marginCloseoutUnrealizedPL: string;
+  marginCloseoutNAV: string;
+  marginCloseoutMarginUsed: string;
+  marginCloseoutPositionValue: string;
+  marginCloseoutPercent: string;
+  withdrawalLimit: string;
+  guaranteedStopLossOrderMode: string;
+  guaranteedStopLossOrderMutability: string;
+  resettablePLTime: string;
+  financing: string;
+  commission: string;
+  guaranteedExecutionFees: string;
+  marginCallMarginUsed: string;
+  marginCallPercent: string;
+}
