@@ -873,7 +873,7 @@ export class OandaTrader {
               //We get an history of previous signals to start work on it
               //We start at the 100th candles to have enough margin
               //We want to get the older first and slowly move forward to the present
-              const reversedPriceData = this.priceData.sort(
+              const reversedPriceData = [...this.priceData].sort(
                 (a, b) => a.time.valueOf() - b.time.valueOf()
               );
               for (let i = 100; i < reversedPriceData.length; i++) {
@@ -945,7 +945,10 @@ export class OandaTrader {
                   if (!newCandles) {
                     return;
                   }
-                  const newOrderedCandles = newCandles;
+                  const newOrderedCandles = newCandles.sort(
+                    (a, b) =>
+                      new Date(b.time).valueOf() - new Date(a.time).valueOf()
+                  );
                   //To replace the current candle by the same one with updated data
                   if (
                     newOrderedCandles.find(

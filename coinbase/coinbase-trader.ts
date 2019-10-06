@@ -450,7 +450,7 @@ export class CoinbaseTrader {
           //We get an history of previous signals to start work on it
           //We start at the 100th candles to have enough margin
           //We want to get the older first and slow move forward to the present
-          const reversedPriceData = this.priceData.sort(
+          const reversedPriceData = [...this.priceData].sort(
             (a, b) => a.time.valueOf() - b.time.valueOf()
           );
           for (let i = 100; i < reversedPriceData.length; i++) {
