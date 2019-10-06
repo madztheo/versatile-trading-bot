@@ -31,7 +31,7 @@ export class ROCPattern {
       values: priceData.map(x => x.close),
       reversedInput: true
     });
-    //We want to be above zero to confirm the buy signal
+    // We want to be above zero to confirm the buy signal
     return results[0] > 0 && results[1] > 0;
   }
 
@@ -47,7 +47,7 @@ export class ROCPattern {
       values: priceData.map(x => x.close),
       reversedInput: true
     });
-    //We want to be below zero to confirm the sell signal
+    // We want to be below zero to confirm the sell signal
     return results[0] < 0 && results[1] < 0;
   }
 }

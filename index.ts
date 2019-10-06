@@ -24,7 +24,11 @@ app.listen(PORT, () => {
   //Forex
   const instruments = instrumentsTraded.split(",");
 
-  //We make test on the pratice account either way
+  /**
+   * Along with real trades we also deal with practice
+   * trades. That way we can test the strategy
+   * for a different period at the same time.
+   */
   for (let instrument of instruments) {
     const oandaTrader = new OandaTrader(
       currentStrategy,
@@ -52,7 +56,11 @@ app.listen(PORT, () => {
     }
   }
 
-  // Backtracking is limited as it doesn't take every variable into account
+  /**
+   * Backtracking is limited as it doesn't take every variable into account.
+   * One main issue is that for now it fails to consider the conversion rate
+   * in the past as it gets the current one at all times
+   *  */
   /*for (let instrument of instruments) {
     const oandaTrader = new OandaTrader(
       currentStrategy,

@@ -26,8 +26,8 @@ export class ADLPattern {
       values: results,
       reversedInput: true
     });
-    //If the Accumulation Distribution is above or equal to its 10 SMA,
-    //we can give the confirmation for the buy signal
+    // If the Accumulation Distribution is above or equal to its 10 SMA,
+    // we can give the confirmation for the buy signal
     return results[0] >= smaResults[0] && results[1] >= smaResults[1];
   }
 
@@ -44,8 +44,8 @@ export class ADLPattern {
       values: results,
       reversedInput: true
     });
-    //If the Accumulation Distribution is below or equal to its 10 SMA,
-    //we can give the confirmation for the sell signal
+    // If the Accumulation Distribution is below or equal to its 10 SMA,
+    // we can give the confirmation for the sell signal
     return results[0] <= smaResults[0] && results[1] <= smaResults[1];
   }
 }

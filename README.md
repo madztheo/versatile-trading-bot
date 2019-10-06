@@ -16,4 +16,4 @@ The project still uses Promises, so one technical improvement that could be done
 
 ## Disclaimer
 
-You are free to use or fork this project as well as suggest improvements. However, I am not responsible for any loss that the usage of this algorithm may incur. Keep in mind that your capital is at risk while investing in markets such as the FOREX or cryptocurrencies.
+You are free to use or fork this project as well as suggest improvements. However, I am not liable for any loss that the use of this algorithm may incur. Keep in mind that your capital is at risk while investing in markets such as the FOREX or cryptocurrencies.
