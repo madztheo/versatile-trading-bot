@@ -11,7 +11,7 @@ export class ATRPattern {
    * Get the stop loss distance for the current price
    * by using the value of the ATR multiplied by 2.
    * That factor is most of the times between 2 and 3 depending
-   * on how much margin you want to give you trade.
+   * on how much margin you want to give your trade.
    * TO-DO: add a parameter to set the factor
    * @param priceData The price data
    */

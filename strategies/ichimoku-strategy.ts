@@ -101,7 +101,7 @@ export class IchimokuStrategy implements Strategy {
         /**
          * A long position has been opened, so we want the stop loss to
          * be at the lowest price of the candle at latest cloud breakout
-         * or downwards base and conversion line crossover
+         * or upwards base and conversion line crossover
          */
         const lastSignalCandle = this.signalsHistory[i].candle;
         return Math.abs(currentCandle.close - lastSignalCandle.low);

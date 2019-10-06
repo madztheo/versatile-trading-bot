@@ -448,12 +448,18 @@ export class CoinbaseTrader {
 
         if (this.currentStrategy === "Ichimoku") {
           //We get an history of previous signals to start work on it
-          //We start at the tenth candles to have enough margin
+          //We start at the 100th candles to have enough margin
           //We want to get the older first and slow move forward to the present
-          const reversedPriceData = this.priceData.reverse();
+          const reversedPriceData = this.priceData.sort(
+            (a, b) => a.time.valueOf() - b.time.valueOf()
+          );
           for (let i = 100; i < reversedPriceData.length; i++) {
             //We need to reverse it again to give it as the algorithm expect it
-            this.strategy.getStrategy(reversedPriceData.slice(0, i).reverse());
+            this.strategy.getStrategy(
+              reversedPriceData
+                .slice(0, i)
+                .sort((a, b) => b.time.valueOf() - a.time.valueOf())
+            );
           }
           //console.log((<IchimokuStrategy>this.strategy).signalsHistory);
         }

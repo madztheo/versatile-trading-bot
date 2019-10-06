@@ -1,4 +1,4 @@
-import * as request from "request";
+const request = require("request");
 import { Observable, Observer } from "rxjs";
 import { AccountDetails } from "./interfaces/account-details";
 import { CandleStickGranularity } from "./interfaces/candle/candle-stick-granularity";
@@ -769,10 +769,12 @@ export class OandaTrader {
               this.strategy = new SimpleEMAStrategy(10, 20);
             }
             //We want the newest candle first
-            const allOrderedCandles = candles.reverse();
+            const allOrderedCandles = candles.sort(
+              (a, b) => new Date(b.time).valueOf() - new Date(a.time).valueOf()
+            );
             const allGenericCandles = this.convertToGenericCandles(
               allOrderedCandles
-            );
+            ).sort((a, b) => b.time.valueOf() - a.time.valueOf());
             this.priceData = allGenericCandles.slice(
               allGenericCandles.length - 500
             );
@@ -863,18 +865,23 @@ export class OandaTrader {
               this.strategy = new SimpleEMAStrategy(10, 20);
             }
             //We want the newest candle first
-            const orderedCandles = candles.reverse();
-            this.priceData = this.convertToGenericCandles(orderedCandles);
+            this.priceData = this.convertToGenericCandles(candles).sort(
+              (a, b) => b.time.valueOf() - a.time.valueOf()
+            );
 
             if (this.currentStrategy === "Ichimoku") {
               //We get an history of previous signals to start work on it
-              //We start at the tenth candles to have enough margin
+              //We start at the 100th candles to have enough margin
               //We want to get the older first and slowly move forward to the present
-              const reversedPriceData = this.priceData.reverse();
+              const reversedPriceData = this.priceData.sort(
+                (a, b) => a.time.valueOf() - b.time.valueOf()
+              );
               for (let i = 100; i < reversedPriceData.length; i++) {
                 //We need to reverse it again to give it as the algorithm expect it
                 this.strategy.getStrategy(
-                  reversedPriceData.slice(0, i).reverse()
+                  reversedPriceData
+                    .slice(0, i)
+                    .sort((a, b) => b.time.valueOf() - a.time.valueOf())
                 );
               }
               //console.log((<IchimokuStrategy>this.strategy).signalsHistory);
@@ -938,7 +945,7 @@ export class OandaTrader {
                   if (!newCandles) {
                     return;
                   }
-                  const newOrderedCandles = newCandles.reverse();
+                  const newOrderedCandles = newCandles;
                   //To replace the current candle by the same one with updated data
                   if (
                     newOrderedCandles.find(

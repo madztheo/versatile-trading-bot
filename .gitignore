@@ -92,3 +92,5 @@ typings/
 .DS_STORE
 
 **.js
+
+tests

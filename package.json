@@ -4,7 +4,8 @@
   "description": "A versatile trading bot which can be connected to different brokers and which can use different strategies.",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "test": "jest"
   },
   "author": "Théo Madzou",
   "license": "ISC",
@@ -18,5 +19,12 @@
     "rxjs": "^6.3.2",
     "technicalindicators": "^1.1.13",
     "ws": "^6.0.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^24.0.18",
+    "@types/node": "^12.7.11",
+    "jest": "^24.9.0",
+    "ts-jest": "^24.1.0",
+    "typescript": "^3.6.3"
   }
 }
