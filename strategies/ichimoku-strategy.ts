@@ -1,6 +1,6 @@
 import { Signal } from "./signal";
 import { StrategyResponse, Strategy } from "./strategy";
-import * as Ichimoku from "ichimoku";
+import Ichimoku from "ichimoku";
 import { GenericCandle } from "../generic-candle";
 import { ROCPattern } from "./roc-pattern";
 
@@ -20,21 +20,19 @@ export class IchimokuStrategy implements Strategy {
    * The Ichimoku Strategy requires a signal history as it needs
    * to consider several signals to initiate a buy or sell signal
    */
-  signalsHistory: { signal: Signal; date: Date; candle?: GenericCandle }[] = [
-    {
-      signal: Signal.Nothing,
-      date: new Date()
-    }
-  ];
-  lock = false;
-  trendFocusStrategy = true;
+  private signalsHistory: {
+    signal: Signal;
+    date: Date;
+    candle?: GenericCandle;
+  }[] = [];
+  private lock = false;
+  private trendFocusStrategy = true;
 
-  private canConsiderSignal(
-    priceData: GenericCandle[],
-    signal: Signal,
-    trendFocus = true
-  ) {
+  constructor(trendFocus = true) {
     this.trendFocusStrategy = trendFocus;
+  }
+
+  private canConsiderSignal(priceData: GenericCandle[], signal: Signal) {
     const lastCandleTime = new Date(priceData[0].time);
     const nextCandleTime = new Date(priceData[0].time);
     const periodInSeconds =
@@ -53,6 +51,7 @@ export class IchimokuStrategy implements Strategy {
     //We don't want to add too many Nothing signals,
     //that would overcharge the array for nothing
     if (
+      this.signalsHistory.length > 0 &&
       signal === Signal.Nothing &&
       this.signalsHistory[0].signal === Signal.Nothing
     ) {
@@ -75,45 +74,9 @@ export class IchimokuStrategy implements Strategy {
   }
 
   /**
-   * Get the distance from the current price for the stop loss.
-   * @param currentCandle The candle in which the position has been opened
-   */
-  getStopLossDistance(currentCandle: GenericCandle) {
-    // Go back in time to find the reference candle
-    for (let i = 0; i < this.signalsHistory.length; i++) {
-      if (
-        (this.signalsHistory[i].signal === Signal.DownwardsBreakout ||
-          this.signalsHistory[i].signal === Signal.DownwardsCrossover) &&
-        this.signalsHistory[i].candle
-      ) {
-        /**
-         * A short position has been opened, so we want the stop loss to
-         * be at the highest price of the candle at latest cloud breakout
-         * or downwards base and conversion line crossover
-         */
-        const lastSignalCandle = this.signalsHistory[i].candle;
-        return Math.abs(currentCandle.close - lastSignalCandle.high);
-      } else if (
-        (this.signalsHistory[i].signal === Signal.UpwardsBreakout ||
-          this.signalsHistory[i].signal === Signal.UpwardsCrossover) &&
-        this.signalsHistory[i].candle
-      ) {
-        /**
-         * A long position has been opened, so we want the stop loss to
-         * be at the lowest price of the candle at latest cloud breakout
-         * or upwards base and conversion line crossover
-         */
-        const lastSignalCandle = this.signalsHistory[i].candle;
-        return Math.abs(currentCandle.close - lastSignalCandle.low);
-      }
-    }
-  }
-
-  /**
    * Get the price for the stop loss
    */
   getStopLossPrice() {
-    // Logic is similar to getStopLossDistance function (i.e. refactoring needed)
     for (let i = 0; i < this.signalsHistory.length; i++) {
       if (
         (this.signalsHistory[i].signal === Signal.DownwardsBreakout ||
@@ -131,6 +94,14 @@ export class IchimokuStrategy implements Strategy {
         return lastSignalCandle.low;
       }
     }
+  }
+
+  /**
+   * Get the distance from the current price for the stop loss.
+   * @param currentCandle The candle in which the position has been opened
+   */
+  getStopLossDistance(currentCandle: GenericCandle) {
+    return Math.abs(currentCandle.close - this.getStopLossPrice());
   }
 
   /**
@@ -512,6 +483,9 @@ export class IchimokuStrategy implements Strategy {
   }
 
   getStrategy(priceData: GenericCandle[]): StrategyResponse {
+    if (!priceData || priceData.length < 200) {
+      throw new Error("candle array too short");
+    }
     // We don't want to consider candles with no trades
     const filteredPrice = priceData.filter(x => x.volume > 0);
     const values = filteredPrice.map(x => {
@@ -541,6 +515,17 @@ export class IchimokuStrategy implements Strategy {
           close: values[i].close
         })
       );
+    }
+
+    // To build up the signal history
+    if (this.signalsHistory.length === 0 && filteredPrice.length >= 150) {
+      for (let i = filteredPrice.length - 101; i > 0; i--) {
+        const startIndex = -1 * (filteredPrice.length - i);
+        this.detectSignal(
+          results.slice(startIndex),
+          filteredPrice.slice(startIndex)
+        );
+      }
     }
 
     const signal = this.detectSignal(results, filteredPrice);

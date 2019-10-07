@@ -14,6 +14,11 @@ There are 2 brokers (or exchanges) implementation in this project so far: Oanda 
 
 The project still uses Promises, so one technical improvement that could be done is switching to async/await when possible. And make yourself aware of all the environment variables that need to be set before using this project.
 
+## Tests
+
+Run `npm test` to execute the tests. This project uses Jest for testing with ts-jest to support TypeScript.
+The tests are based on sample data extracted from Oanda API.
+
 ## Disclaimer
 
 You are free to use or fork this project as well as suggest improvements. However, I am not liable for any loss that the use of this algorithm may incur. Keep in mind that your capital is at risk while investing in markets such as the FOREX or cryptocurrencies.

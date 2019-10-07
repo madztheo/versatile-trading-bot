@@ -8,14 +8,14 @@ const SMA = technicalIndicators.SMA;
 /**
  * The Simple Moving Average (SMA) is one of the most common
  * technical indicator. It smooths the price by averaging it
- * over a certain period of time and showing it as a curve on
+ * over a certain period of time and is displayed as a curve on
  * charts. The longer the period is the less sensitive to price
  * changes the moving average is.
  * Moving averages are used at least in pairs and often in group of 3.
  * Those 3 moving averages have a different period each. A short one,
- * which tends to between 10 or 20, a medium one which tends to be
+ * which tends to between 10 and 20, a medium one which tends to be
  * between 20 and 50, and a long one which tends to be between 50 and 200.
- * The crossovers of those curves then serves as signals.
+ * The crossovers of those lines then serves as signals.
  */
 export class SimpleSMAStrategy implements Strategy {
   shortPeriod: number;
