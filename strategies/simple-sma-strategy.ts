@@ -44,72 +44,58 @@ export class SimpleSMAStrategy implements Strategy {
     baseMA: number[],
     priceData: GenericCandle[]
   ): Signal {
-    const lastMAPoints = [
-      {
-        //Previous
-        shortMA: shortMA[1],
-        longMA: longMA[1],
-        baseMA: baseMA[1]
-      },
-      {
-        //Current
-        shortMA: shortMA[0],
-        longMA: longMA[0],
-        baseMA: baseMA[0]
-      }
-    ];
     const candlesPattern = new CandlePattern();
     const candleSignal = candlesPattern.detectCandleSignal(priceData);
     if (
-      lastMAPoints[1].shortMA > lastMAPoints[1].longMA &&
-      lastMAPoints[0].longMA <= lastMAPoints[0].baseMA &&
-      lastMAPoints[1].longMA > lastMAPoints[1].baseMA
+      shortMA[0] > longMA[0] && // Current candle: the short MA is above the long MA
+      longMA[1] <= baseMA[1] && // Previous candle: the long MA is below or equal to the base MA
+      longMA[0] > baseMA[0] // Current candle: the long MA is now above the base MA
     ) {
-      //To avoid emitting the same signal several times
+      // To avoid emitting the same signal several times
       if (this.lastSignalEmitted === Signal.StrongBuy) {
         return Signal.Nothing;
       }
-      //Here the long period crosses the base period with the short period being
-      //above the long period. This a strong buy signal
+      // Here the long MA crosses the base MA with the short MA being
+      // above the long MA. This a strong buy signal
       this.lastSignalEmitted = Signal.StrongBuy;
       return Signal.StrongBuy;
     } else if (
-      lastMAPoints[0].shortMA <= lastMAPoints[0].longMA &&
-      lastMAPoints[1].shortMA > lastMAPoints[1].longMA
+      shortMA[1] <= longMA[1] && // Previous candle: The short MA is below or equal to the long MA
+      shortMA[0] > longMA[0] // Current candle: The short MA is above the long MA
     ) {
-      //To avoid emitting the same signal several times
+      // To avoid emitting the same signal several times
       if (this.lastSignalEmitted === Signal.Buy) {
         return Signal.Nothing;
       }
-      //Here the short moving average crosses the long moving average upwards giving a buying signal
+      // Here the short MA crosses the long MA upwards giving a buying signal
       this.lastSignalEmitted = Signal.Buy;
       return Signal.Buy;
     } else if (
-      lastMAPoints[0].shortMA >= lastMAPoints[0].longMA &&
-      lastMAPoints[1].shortMA < lastMAPoints[1].longMA
+      shortMA[1] >= longMA[1] && // Previous candle: the short MA is above or equal to the long MA
+      shortMA[0] < longMA[0] // Current candle: the short MA is now below the long MA
     ) {
-      //To avoid emitting the same signal several times
+      // To avoid emitting the same signal several times
       if (this.lastSignalEmitted === Signal.Sell) {
         return Signal.Nothing;
       }
-      //Here the short moving average crosses the long moving average downwards giving a selling signal
+      // Here the short MA crosses the long MA downwards giving a selling signal
       this.lastSignalEmitted = Signal.Sell;
       return Signal.Sell;
     } else if (
-      lastMAPoints[1].shortMA < lastMAPoints[1].longMA &&
-      lastMAPoints[0].longMA >= lastMAPoints[0].baseMA &&
-      lastMAPoints[1].longMA < lastMAPoints[1].baseMA
+      shortMA[0] < longMA[0] && // Current candle: the short MA is below the long MA
+      longMA[1] >= baseMA[1] && // Previous candle: the long MA is above or equal to the base MA
+      longMA[0] < baseMA[0] // Current candle: the long MA is now below the base MA
     ) {
-      //To avoid emitting the same signal several times
+      // To avoid emitting the same signal several times
       if (this.lastSignalEmitted === Signal.StrongSell) {
         return Signal.Nothing;
       }
-      //Here the long period crosses the base period with the short period being
-      //below the long period. This a strong sell signal
+      // Here the long MA crosses the base MA with the short MA being
+      // below the long MA. This a strong sell signal
       this.lastSignalEmitted = Signal.StrongSell;
       return Signal.StrongSell;
     } else if (candleSignal !== Signal.Nothing) {
-      //We detect possible candle pattern to help us exit our position if necessary
+      // We detect possible candle pattern to help us exit our position if necessary
       if (this.lastSignalEmitted === candleSignal) {
         return Signal.Nothing;
       }
@@ -123,7 +109,7 @@ export class SimpleSMAStrategy implements Strategy {
   }
 
   getStrategy(priceData: GenericCandle[]): StrategyResponse {
-    //We don't want to consider candles with no trades
+    // We don't want to consider candles with no trades
     const filteredPrice = priceData.filter(x => x.volume > 0);
     const closeValues = filteredPrice.map(x => x.close);
     const SMAShort = this.getSMA(this.shortPeriod, closeValues);

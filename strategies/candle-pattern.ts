@@ -2,7 +2,9 @@ import { GenericCandle } from "../generic-candle";
 import { Signal } from "./signal";
 
 export class CandlePattern {
-  detectCandleSignal(priceData: GenericCandle[]): Signal {
+  detectCandleSignal(
+    priceData: GenericCandle[]
+  ): Signal.ShortExit | Signal.LongExit | Signal.Nothing {
     if (
       priceData[1].close < priceData[1].open &&
       priceData[2].close < priceData[2].open &&

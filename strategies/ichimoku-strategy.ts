@@ -33,23 +33,17 @@ export class IchimokuStrategy implements Strategy {
   }
 
   private canConsiderSignal(priceData: GenericCandle[], signal: Signal) {
-    const lastCandleTime = new Date(priceData[0].time);
-    const nextCandleTime = new Date(priceData[0].time);
-    const periodInSeconds =
-      (lastCandleTime.valueOf() - priceData[1].time.valueOf()) / 1000;
-    nextCandleTime.setSeconds(nextCandleTime.getSeconds() + periodInSeconds);
-    //If the same signal has already been emitted in the current candle, we don't consider it
+    // If the same signal has already been emitted in the current candle, we don't consider it
     return !this.signalsHistory.find(
       x =>
-        x.date >= lastCandleTime &&
-        x.date < nextCandleTime &&
+        x.candle.time.valueOf() === priceData[0].time.valueOf() &&
         x.signal === signal
     );
   }
 
   private addSignalToHistory(signal: Signal, candle?: GenericCandle) {
-    //We don't want to add too many Nothing signals,
-    //that would overcharge the array for nothing
+    // We don't want to add too many Nothing signals,
+    // that would overcharge the array for nothing
     if (
       this.signalsHistory.length > 0 &&
       signal === Signal.Nothing &&

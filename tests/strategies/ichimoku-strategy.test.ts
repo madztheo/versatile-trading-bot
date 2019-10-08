@@ -42,6 +42,24 @@ describe("Ichimoku strategy", () => {
     expect(result.signal).toBe(Signal.Sell);
   });
 
+  test("it should not return the same sell signal twice in a row", () => {
+    const strategy = new IchimokuStrategy();
+    const startIndex = priceData.findIndex(
+      x =>
+        x.time.getUTCDate() == 25 &&
+        x.time.getUTCMonth() === 8 &&
+        x.time.getUTCFullYear() === 2019 &&
+        x.time.getUTCHours() === 12
+    );
+
+    const candles = priceData.slice(startIndex);
+    const result = strategy.getStrategy(candles);
+    expect(result.signal).toBe(Signal.Sell);
+
+    const secondResult = strategy.getStrategy(candles);
+    expect(secondResult.signal).toBe(Signal.Nothing);
+  });
+
   test("it should return a sell signal on September 16, 2019 at 15:00 UTC", () => {
     const strategy = new IchimokuStrategy();
     const startIndex = priceData.findIndex(
@@ -85,6 +103,23 @@ describe("Ichimoku strategy", () => {
     expect(result.signal).toBe(Signal.Buy);
   });
 
+  test("it should not return the same buy signal twice in row", () => {
+    const strategy = new IchimokuStrategy();
+    const startIndex = priceData.findIndex(
+      x =>
+        x.time.getUTCDate() == 4 &&
+        x.time.getUTCMonth() === 8 &&
+        x.time.getUTCFullYear() === 2019 &&
+        x.time.getUTCHours() === 9
+    );
+    const candles = priceData.slice(startIndex);
+    const result = strategy.getStrategy(candles);
+    expect(result.signal).toBe(Signal.Buy);
+
+    const secondResult = strategy.getStrategy(candles);
+    expect(secondResult.signal).toBe(Signal.Nothing);
+  });
+
   test("it should return a strong buy signal on August 23 at 20:00 UTC", () => {
     const strategy = new IchimokuStrategy();
     const startIndex = priceData.findIndex(
@@ -97,6 +132,23 @@ describe("Ichimoku strategy", () => {
     const candles = priceData.slice(startIndex);
     const result = strategy.getStrategy(candles);
     expect(result.signal).toBe(Signal.StrongBuy);
+  });
+
+  test("it should not return the same strong buy signal twice in row", () => {
+    const strategy = new IchimokuStrategy();
+    const startIndex = priceData.findIndex(
+      x =>
+        x.time.getUTCDate() == 23 &&
+        x.time.getUTCMonth() === 7 &&
+        x.time.getUTCFullYear() === 2019 &&
+        x.time.getUTCHours() === 20
+    );
+    const candles = priceData.slice(startIndex);
+    const result = strategy.getStrategy(candles);
+    expect(result.signal).toBe(Signal.StrongBuy);
+
+    const secondResult = strategy.getStrategy(candles);
+    expect(secondResult.signal).toBe(Signal.Nothing);
   });
 
   test("it should return a long exit signal on September 6 at 00:00 UTC", () => {
