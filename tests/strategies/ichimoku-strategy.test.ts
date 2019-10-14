@@ -1,5 +1,5 @@
 import { IchimokuStrategy } from "../../strategies/ichimoku-strategy";
-import priceData from "../mock-data/candles";
+import priceData from "../../mock-data/candles";
 import { Signal } from "../../strategies/signal";
 
 // The data used for comparison is coming from TradingView using Oanda data

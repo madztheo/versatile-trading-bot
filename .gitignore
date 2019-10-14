@@ -94,4 +94,4 @@ typings/
 **.js
 !*.config.js
 
-coverage
+oanda/oanda-backtracking.ts

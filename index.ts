@@ -35,7 +35,6 @@ app.listen(PORT, () => {
       forexTestPeriod,
       instrument,
       false,
-      false,
       instruments.length
     );
     oandaTrader.start();
@@ -48,7 +47,6 @@ app.listen(PORT, () => {
         currentStrategy,
         forexPeriod,
         instrument,
-        false,
         true,
         instruments.length
       );
@@ -57,9 +55,8 @@ app.listen(PORT, () => {
   }
 
   /**
-   * Backtracking is limited as it doesn't take every variable into account.
-   * One main issue is that for now it fails to consider the conversion rate
-   * in the past as it gets the current one at all times
+   * Backtracking has been taken out temporarily of the Oanda implementation.
+   * It will be brought back soon as an independent class from OandaTrader.
    *  */
   /*for (let instrument of instruments) {
     const oandaTrader = new OandaTrader(
