@@ -93,5 +93,3 @@ typings/
 
 **.js
 !*.config.js
-
-oanda/oanda-backtracking.ts
