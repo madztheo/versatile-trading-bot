@@ -1,6 +1,9 @@
-import * as express from "express";
+import express from "express";
 import { OandaTrader } from "./oanda/oanda-trader";
 import { CoinbaseTrader } from "./coinbase/coinbase-trader";
+import { OandaBacktracking } from "./oanda/oanda-backtracking";
+import dotenv from "dotenv";
+dotenv.config();
 const app = express();
 
 const PORT = process.env.PORT || 3000;
@@ -13,6 +16,20 @@ let forexRealTrading = false;
 if (process.env.REAL_FOREX) {
   forexRealTrading = process.env.REAL_FOREX == "1";
 }
+
+app.get("/backtracking", (req, res) => {
+  const instruments = instrumentsTraded.split(",");
+  for (let instrument of instruments) {
+    const oandaTrader = new OandaBacktracking(
+      currentStrategy,
+      forexPeriod,
+      instrument,
+      instruments.length
+    );
+    oandaTrader.startBacktracking();
+  }
+  res.send("Backtracking started");
+});
 
 app.listen(PORT, () => {
   console.log(`Trading bot listening on port ${PORT}`);
@@ -53,20 +70,4 @@ app.listen(PORT, () => {
       oandaTrader.start();
     }
   }
-
-  /**
-   * Backtracking has been taken out temporarily of the Oanda implementation.
-   * It will be brought back soon as an independent class from OandaTrader.
-   *  */
-  /*for (let instrument of instruments) {
-    const oandaTrader = new OandaTrader(
-      currentStrategy,
-      forexPeriod,
-      instrument,
-      true,
-      false,
-      instruments.length
-    );
-    oandaTrader.startBacktracking();
-  }*/
 });

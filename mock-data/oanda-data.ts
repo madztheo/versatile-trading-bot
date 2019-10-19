@@ -4,7 +4,7 @@ export const accountSummary = {
   balance: "43650.78835",
   createdByUserID: 9381808,
   createdTime: "2015-08-12T18:21:00.697504698Z",
-  currency: "CHF",
+  currency: "EUR",
   hedgingEnabled: false,
   id: "101-004-9381808-001",
   lastTransactionID: "6356",

@@ -106,18 +106,128 @@ export class OandaAPI {
   }
 
   async getPrice(): Promise<Price> {
-    try {
-      const {
-        prices: [price]
-      } = await this.singleRequest(
-        `/v3/accounts/${this.accountID}/pricing?instruments=${this.pairTraded}`
+    const {
+      prices: [price]
+    } = await this.singleRequest(
+      `/v3/accounts/${this.accountID}/pricing?instruments=${this.pairTraded}`
+    );
+    return price;
+  }
+
+  async getInstruments(): Promise<Instrument[]> {
+    const { instruments } = await this.singleRequest(
+      `/v3/accounts/${this.accountID}/instruments`
+    );
+    return instruments;
+  }
+
+  async getCandle(
+    pair: string,
+    granularity: CandleStickGranularity,
+    date?: Date
+  ): Promise<CandleStick> {
+    const {
+      candles: [candle]
+    } = await this.singleRequest(
+      `/v3/instruments/${pair}/candles?count=1&price=MBA&granularity=${granularity}&from=${date.toISOString()}`
+    );
+    return candle;
+  }
+
+  /**
+   * Get the conversion rate used for calculating profit
+   * cf. https://www1.oanda.com/forex-trading/analysis/profit-calculator/
+   * @param accountCurrency The currency of the account
+   * @param date The date to consider for the rate
+   * @param granularity
+   */
+  async getClosingConversionRate(
+    accountCurrency: string,
+    date: Date,
+    granularity: CandleStickGranularity
+  ) {
+    const [baseCurrency, quoteCurrency] = this.pairTraded.split("_");
+    if (quoteCurrency === accountCurrency) {
+      return 1;
+    }
+
+    if (baseCurrency === accountCurrency) {
+      const candle = await this.getCandle(this.pairTraded, granularity, date);
+      const candleClose = parseFloat(candle.mid.c);
+      return 1 / candleClose;
+    } else {
+      /**
+       * We are trading a currency pair not including the account own's currency.
+       * So we need to get all the pairs available to find the one including the
+       * account currency and the quote currency of the traded pair
+       */
+      const instruments = await this.getInstruments();
+      const currencies = instruments.filter(x => x.type === "CURRENCY");
+      const pair = currencies.find(
+        x => x.name.includes(quoteCurrency) && x.name.includes(accountCurrency)
       );
-      return price;
-    } catch (error) {
-      throw new Error();
+      if (!pair) {
+        throw new Error();
+      }
+      const [base] = pair.name.split("_");
+      const candle = await this.getCandle(pair.name, granularity, date);
+      const candleClose = parseFloat(candle.mid.c);
+      if (base === accountCurrency) {
+        return 1 / candleClose;
+      } else {
+        return candleClose;
+      }
     }
   }
 
+  /**
+   * Get the conversion rate used to calculate the number of units at entry
+   * @param accountCurrency The currency of the account
+   * @param date The date to consider for the rate
+   * @param granularity
+   */
+  async getPastConversionRate(
+    accountCurrency: string,
+    date: Date,
+    granularity: CandleStickGranularity
+  ) {
+    const [baseCurrency, quoteCurrency] = this.pairTraded.split("_");
+    if (baseCurrency === accountCurrency) {
+      return 1;
+    }
+
+    if (quoteCurrency === accountCurrency) {
+      const candle = await this.getCandle(this.pairTraded, granularity, date);
+      const candleClose = parseFloat(candle.mid.c);
+      return 1 / candleClose;
+    } else {
+      /**
+       * We are trading a currency pair not including the account own's currency.
+       * So we need to get all the pairs available to find the one including the
+       * account currency and the base currency of the traded pair
+       */
+      const instruments = await this.getInstruments();
+      const currencies = instruments.filter(x => x.type === "CURRENCY");
+      const pair = currencies.find(
+        x => x.name.includes(baseCurrency) && x.name.includes(accountCurrency)
+      );
+      if (!pair) {
+        throw new Error();
+      }
+      const [base] = pair.name.split("_");
+      const candle = await this.getCandle(pair.name, granularity, date);
+      const candleClose = parseFloat(candle.mid.c);
+      if (base === accountCurrency) {
+        return 1 / candleClose;
+      } else {
+        return candleClose;
+      }
+    }
+  }
+
+  /**
+   * Get the latest conversion rate directly provided by Oanda
+   */
   async getConversionRates(): Promise<HomeConversions[]> {
     const { homeConversions } = await this.singleRequest(
       `/v3/accounts/${this.accountID}/pricing?instruments=${this.pairTraded}&includeHomeConversions=true`
@@ -126,16 +236,12 @@ export class OandaAPI {
   }
 
   async getInstrumentDetails(): Promise<Instrument> {
-    try {
-      const {
-        instruments: [instrument]
-      } = await this.singleRequest(
-        `/v3/accounts/${this.accountID}/instruments?instruments=${this.pairTraded}`
-      );
-      return instrument;
-    } catch (error) {
-      throw new Error();
-    }
+    const {
+      instruments: [instrument]
+    } = await this.singleRequest(
+      `/v3/accounts/${this.accountID}/instruments?instruments=${this.pairTraded}`
+    );
+    return instrument;
   }
 
   async getCandles(

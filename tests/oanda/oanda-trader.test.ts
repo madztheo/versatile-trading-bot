@@ -208,7 +208,7 @@ describe("Oanda trader", () => {
     accountSummary.marginCallPercent = tempMarginCallPercent;
   });
 
-  test("it should throw an error when too much funds has been invested while trying to open a long position", async () => {
+  test("it should throw an error when too much funds have been invested while trying to open a long position", async () => {
     const balance = parseFloat(accountSummary.balance);
     const maxUnits = await oandaTrader.getUnits(balance);
     const tempShortUnits = position.short.units;
@@ -267,7 +267,7 @@ describe("Oanda trader", () => {
     accountSummary.marginCallPercent = tempMarginCallPercent;
   });
 
-  test("it should throw an error when too much funds has been invested while trying to open a short position", async () => {
+  test("it should throw an error when too much funds have been invested while trying to open a short position", async () => {
     const balance = parseFloat(accountSummary.balance);
     const maxUnits = await oandaTrader.getUnits(balance);
     const tempShortUnits = position.short.units;
@@ -365,10 +365,10 @@ describe("Oanda trader", () => {
       oandaTrader.analyseSignal(Signal.Nothing, 1.12, 1.1202)
     ).resolves.toBe(false);
 
-    expect(openLongSpy).not.toHaveBeenCalledTimes(1);
-    expect(openShortSpy).not.toHaveBeenCalledTimes(1);
-    expect(closeLongSpy).not.toHaveBeenCalledTimes(1);
-    expect(closeShortSpy).not.toHaveBeenCalledTimes(1);
+    expect(openLongSpy).not.toHaveBeenCalled();
+    expect(openShortSpy).not.toHaveBeenCalled();
+    expect(closeLongSpy).not.toHaveBeenCalled();
+    expect(closeShortSpy).not.toHaveBeenCalled();
 
     position.short.units = tempShortUnits;
     position.long.units = tempLongUnits;
