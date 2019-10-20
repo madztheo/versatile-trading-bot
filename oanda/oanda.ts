@@ -62,8 +62,6 @@ export abstract class Oanda {
     console.log(`Forex pair traded : ${this.pairTraded}`);
     console.log(`Forex period used : ${this.period} minutes`);
     console.log(`Forex strategy : ${this.currentStrategy}`);
-    console.log(this.apiKey);
-    console.log(this.accountID);
   }
 
   protected convertToGenericCandles(
