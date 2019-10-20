@@ -6,7 +6,9 @@
   "scripts": {
     "postinstall": "npx tsc",
     "start": "node index.js",
-    "test": "jest"
+    "test": "jest",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "author": "Théo Madzou",
   "license": "ISC",
@@ -20,7 +22,8 @@
     "request": "^2.88.0",
     "rxjs": "^6.3.2",
     "technicalindicators": "^2.0.9",
-    "ws": "^6.0.0"
+    "ws": "^6.0.0",
+    "snyk": "^1.236.1"
   },
   "devDependencies": {
     "@types/jest": "^24.0.18",
@@ -28,5 +31,6 @@
     "jest": "^24.9.0",
     "ts-jest": "^24.1.0",
     "typescript": "^3.6.3"
-  }
+  },
+  "snyk": true
 }
