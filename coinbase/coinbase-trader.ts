@@ -1,5 +1,5 @@
 import { Order } from "./order";
-import * as Gdax from "gdax";
+import Coinbase from "coinbase-pro";
 import { Signal } from "../strategies/signal";
 import { SimpleEMAStrategy } from "../strategies/simple-ema-strategy";
 import { IchimokuStrategy } from "../strategies/ichimoku-strategy";
@@ -73,7 +73,7 @@ export class CoinbaseTrader {
     });
   }
 
-  private getCurrentPosition(authedClient: Gdax.AuthenticatedClient) {
+  private getCurrentPosition(authedClient: Coinbase.AuthenticatedClient) {
     this.getFilledOrders(authedClient, "all").then(latestOrders => {
       if (latestOrders && latestOrders.length > 0) {
         this.hasOpenBuyPosition = latestOrders[0].side === "buy";
@@ -94,7 +94,7 @@ export class CoinbaseTrader {
   }
 
   private getFilledOrders(
-    authedClient: Gdax.AuthenticatedClient,
+    authedClient: Coinbase.AuthenticatedClient,
     side: string
   ) {
     return authedClient
@@ -130,7 +130,7 @@ export class CoinbaseTrader {
     });
   }
 
-  private getHistoricRates(authedClient: Gdax.AuthenticatedClient) {
+  private getHistoricRates(authedClient: Coinbase.AuthenticatedClient) {
     return authedClient
       .getProductHistoricRates(this.pair, {
         granularity: 60 * this.period
@@ -140,7 +140,7 @@ export class CoinbaseTrader {
       });
   }
 
-  private getAvailableBalances(authedClient: Gdax.AuthenticatedClient) {
+  private getAvailableBalances(authedClient: Coinbase.AuthenticatedClient) {
     return authedClient.getAccounts().then(accounts => {
       const availableBalances = {
         BTC: "0",
@@ -157,19 +157,19 @@ export class CoinbaseTrader {
     });
   }
 
-  private isSellPositionOpen(authedClient: Gdax.AuthenticatedClient) {
+  private isSellPositionOpen(authedClient: Coinbase.AuthenticatedClient) {
     return this.getFilledOrders(authedClient, "sell").then(orders => {
       return orders && orders.length > 0 && orders[0].settled;
     });
   }
 
-  private isBuyPositionOpen(authedClient: Gdax.AuthenticatedClient) {
+  private isBuyPositionOpen(authedClient: Coinbase.AuthenticatedClient) {
     return this.getFilledOrders(authedClient, "buy").then(orders => {
       return orders && orders.length > 0 && orders[0].settled;
     });
   }
 
-  private getAmountOfCryptoToSell(authedClient: Gdax.AuthenticatedClient) {
+  private getAmountOfCryptoToSell(authedClient: Coinbase.AuthenticatedClient) {
     return authedClient
       .getFills({
         product_id: this.pair
@@ -187,7 +187,7 @@ export class CoinbaseTrader {
     return Math.floor(num * 100) / 100;
   }
 
-  private buy(authedClient: Gdax.AuthenticatedClient, signal: Signal) {
+  private buy(authedClient: Coinbase.AuthenticatedClient, signal: Signal) {
     return this.getAvailableBalances(authedClient).then(balances => {
       const funds = this.roundTo2Decimals(parseFloat(this.maxFunds));
       const availableBalance = this.roundTo2Decimals(
@@ -225,7 +225,7 @@ export class CoinbaseTrader {
     });
   }
 
-  private sell(authedClient: Gdax.AuthenticatedClient) {
+  private sell(authedClient: Coinbase.AuthenticatedClient) {
     return this.getAvailableBalances(authedClient).then(balances => {
       if (balances[this.pair.substr(0, 3)] !== "0") {
         return authedClient.sell({
@@ -241,7 +241,7 @@ export class CoinbaseTrader {
 
   private analyseSignal(
     signal: Signal,
-    authedClient: Gdax.AuthenticatedClient
+    authedClient: Coinbase.AuthenticatedClient
   ) {
     if (this.canTrade) {
       console.log("can trade");
@@ -297,7 +297,7 @@ export class CoinbaseTrader {
   }
 
   private callStrategy(
-    authedClient: Gdax.AuthenticatedClient,
+    authedClient: Coinbase.AuthenticatedClient,
     strategy: Strategy
   ) {
     const strategyRes = strategy.getStrategy(this.priceData);
@@ -319,7 +319,7 @@ export class CoinbaseTrader {
 
   private handleHistoricRate(
     data: GenericCandle[],
-    authedClient: Gdax.AuthenticatedClient,
+    authedClient: Coinbase.AuthenticatedClient,
     strategy: Strategy
   ) {
     if (!this.priceData) {
@@ -343,7 +343,7 @@ export class CoinbaseTrader {
     this.callStrategy(authedClient, strategy);
   }
 
-  private onSocketDisconnected(websocket: Gdax.WebsocketClient) {
+  private onSocketDisconnected(websocket: Coinbase.WebsocketClient) {
     console.log(
       "ERROR",
       "Websocket Error",
@@ -376,7 +376,7 @@ export class CoinbaseTrader {
     }, 30000);
   }
 
-  private checkStopLoss(data: any, authedClient: Gdax.AuthenticatedClient) {
+  private checkStopLoss(data: any, authedClient: Coinbase.AuthenticatedClient) {
     if (this.hasOpenBuyPosition && data.type === "ticker") {
       const stopLoss = this.computeStopLossPrice(
         this.stopLossPercentage,
@@ -407,7 +407,7 @@ export class CoinbaseTrader {
   }
 
   start() {
-    const websocket = new Gdax.WebsocketClient(
+    const websocket = new Coinbase.WebsocketClient(
       [this.pair],
       this.socketUrl,
       {
@@ -418,7 +418,7 @@ export class CoinbaseTrader {
       { channels: ["ticker", "heartbeat"] }
     );
 
-    const authedClient = new Gdax.AuthenticatedClient(
+    const authedClient = new Coinbase.AuthenticatedClient(
       this.key,
       this.secret,
       this.passphrase,
