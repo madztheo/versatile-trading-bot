@@ -4,6 +4,7 @@
   "description": "A versatile trading bot which can be connected to different brokers and which can use different strategies.",
   "main": "index.js",
   "scripts": {
+    "postinstall": "npx tsc",
     "start": "node index.js",
     "test": "jest"
   },
