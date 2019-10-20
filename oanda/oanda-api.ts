@@ -323,7 +323,7 @@ export class OandaAPI {
   async openLong(
     units: number,
     stopLossDistance: string,
-    trailingStopLoss = false
+    trailingStopLoss = true
   ) {
     return this.openOrder(units, stopLossDistance, trailingStopLoss);
   }
@@ -331,7 +331,7 @@ export class OandaAPI {
   async openShort(
     units: number,
     stopLossDistance: string,
-    trailingStopLoss = false
+    trailingStopLoss = true
   ) {
     return this.openOrder(-1 * units, stopLossDistance, trailingStopLoss);
   }
