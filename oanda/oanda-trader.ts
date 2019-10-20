@@ -20,20 +20,9 @@ import { OandaAPI } from "./oanda-api";
 import { Oanda } from "./oanda";
 
 export class OandaTrader extends Oanda {
-  apiKey = "";
-  accountID = "";
-  pairTraded = "EUR_USD";
   priceData: GenericCandle[];
   canTrade = process.env.CAN_TRADE === "true" ? true : false;
-  currentStrategy = "Ichimoku";
-  period = 5;
   hasClosePositionBeforeWeekend = false;
-  instrumentDetails: Instrument;
-  realTrade = false;
-  nbOfPairsTraded = 1;
-  accountSummary: AccountSummary;
-  strategy: Strategy;
-  oandaAPI: OandaAPI;
   tradingInterval: any;
 
   constructor(
@@ -43,31 +32,8 @@ export class OandaTrader extends Oanda {
     realTrade = false,
     pairsTraded = 1
   ) {
-    super();
-    this.apiKey = this.realTrade
-      ? process.env.OANDA_REAL_API_KEY
-      : process.env.OANDA_TEST_API_KEY;
-    this.accountID = this.realTrade
-      ? process.env.OANDA_REAL_ACCOUNT_ID
-      : process.env.OANDA_TEST_ACCOUNT_ID;
-    this.pairTraded = asset;
-    this.realTrade = realTrade;
-    this.currentStrategy = strategy;
-    this.period = period;
-    this.nbOfPairsTraded = pairsTraded;
-
-    this.oandaAPI = new OandaAPI(
-      this.apiKey,
-      this.accountID,
-      this.pairTraded,
-      this.realTrade
-    );
-
-    console.log("==== Forex pair ====");
-    console.log(`Forex pair traded : ${this.pairTraded}`);
-    console.log(`Forex period used : ${this.period} minutes`);
+    super(strategy, period, asset, realTrade, pairsTraded);
     console.log(`Forex trade ${this.canTrade ? "on" : "off"}`);
-    console.log(`Forex strategy : ${this.currentStrategy}`);
     console.log(`Real trading : ${this.realTrade}`);
   }
 

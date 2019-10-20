@@ -25,23 +25,13 @@ import { Oanda } from "./oanda";
  * the overall efficiency of a given strategy.
  */
 export class OandaBacktracking extends Oanda {
-  apiKey = "";
-  accountID = "";
-  pairTraded = "EUR_USD";
   priceData: GenericCandle[];
-  currentStrategy = "Ichimoku";
-  period = 5;
   hasClosePositionBeforeWeekend = false;
-  instrumentDetails: Instrument;
-  nbOfPairsTraded = 1;
-  accountSummary: AccountSummary;
   backTrackingPosition: {
     units: number;
     entryPrice: number;
     type: "long" | "short";
   };
-  strategy: Strategy;
-  oandaAPI: OandaAPI;
   tradingInterval: any;
 
   constructor(
@@ -50,29 +40,7 @@ export class OandaBacktracking extends Oanda {
     asset = "EUR_USD",
     pairsTraded = 1
   ) {
-    super();
-    this.apiKey = this.realTrade
-      ? process.env.OANDA_REAL_API_KEY
-      : process.env.OANDA_TEST_API_KEY;
-    this.accountID = this.realTrade
-      ? process.env.OANDA_REAL_ACCOUNT_ID
-      : process.env.OANDA_TEST_ACCOUNT_ID;
-    this.pairTraded = asset;
-    this.currentStrategy = strategy;
-    this.period = period;
-    this.nbOfPairsTraded = pairsTraded;
-
-    this.oandaAPI = new OandaAPI(
-      this.apiKey,
-      this.accountID,
-      this.pairTraded,
-      this.realTrade
-    );
-
-    console.log("==== Forex pair ====");
-    console.log(`Forex pair traded : ${this.pairTraded}`);
-    console.log(`Forex period used : ${this.period} minutes`);
-    console.log(`Forex strategy : ${this.currentStrategy}`);
+    super(strategy, period, asset, true, pairsTraded);
   }
 
   private async closeLongPosition(bid?: number) {

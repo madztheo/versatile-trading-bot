@@ -19,6 +19,8 @@ import { ATRPattern } from "../strategies/atr-pattern";
 import { OandaAPI } from "./oanda-api";
 
 export abstract class Oanda {
+  apiKey = "";
+  accountID = "";
   pairTraded = "EUR_USD";
   priceData: GenericCandle[];
   currentStrategy = "Ichimoku";
@@ -29,6 +31,40 @@ export abstract class Oanda {
   accountSummary: AccountSummary;
   strategy: Strategy;
   oandaAPI: OandaAPI;
+
+  constructor(
+    strategy = "Ichimoku",
+    period = 5,
+    asset = "EUR_USD",
+    realTrade = false,
+    pairsTraded = 1
+  ) {
+    this.realTrade = realTrade;
+    this.apiKey = this.realTrade
+      ? process.env.OANDA_REAL_API_KEY
+      : process.env.OANDA_TEST_API_KEY;
+    this.accountID = this.realTrade
+      ? process.env.OANDA_REAL_ACCOUNT_ID
+      : process.env.OANDA_TEST_ACCOUNT_ID;
+    this.pairTraded = asset;
+    this.currentStrategy = strategy;
+    this.period = period;
+    this.nbOfPairsTraded = pairsTraded;
+
+    this.oandaAPI = new OandaAPI(
+      this.apiKey,
+      this.accountID,
+      this.pairTraded,
+      this.realTrade
+    );
+
+    console.log("==== Forex pair ====");
+    console.log(`Forex pair traded : ${this.pairTraded}`);
+    console.log(`Forex period used : ${this.period} minutes`);
+    console.log(`Forex strategy : ${this.currentStrategy}`);
+    console.log(this.apiKey);
+    console.log(this.accountID);
+  }
 
   protected convertToGenericCandles(
     oandaCandles: CandleStick[]
