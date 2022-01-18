@@ -19,7 +19,7 @@
     "nodemailer": "^4.6.8",
     "request": "^2.88.0",
     "rxjs": "^6.3.2",
-    "technicalindicators": "^2.0.9",
+    "technicalindicators": "^3.0.0",
     "ws": "^6.0.0"
   },
   "devDependencies": {
