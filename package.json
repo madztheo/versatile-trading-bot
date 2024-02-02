@@ -17,7 +17,7 @@
     "express": "^4.16.3",
     "ichimoku": "^1.0.4",
     "nodemailer": "^4.6.8",
-    "request": "^2.88.0",
+    "request": "^2.88.2",
     "rxjs": "^6.3.2",
     "technicalindicators": "^2.0.9",
     "ws": "^6.0.0"
